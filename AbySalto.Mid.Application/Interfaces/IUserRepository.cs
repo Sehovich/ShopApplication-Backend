@@ -1,6 +1,6 @@
 ﻿using AbySalto.Mid.Domain.Entities;
 
-namespace AbySalto.Mid.Domain.Interfaces;
+namespace AbySalto.Mid.Application.Interfaces;
 
 public interface IUserRepository
 {

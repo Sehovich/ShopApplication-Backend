@@ -1,6 +1,6 @@
 ﻿using MediatR;
-using AbySalto.Mid.Domain.Interfaces;
 using AbySalto.Mid.Application.Contracts.User;
+using AbySalto.Mid.Application.Interfaces;
 
 namespace AbySalto.Mid.Application.Users.Queries;
 

@@ -1,5 +1,7 @@
-﻿using MediatR;
+﻿using AbySalto.Mid.Application.Products.Queries;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
+
 
 [ApiController]
 [Route("api/[controller]")]
@@ -17,5 +19,12 @@ public class ProductsController : ControllerBase
     {
         var products = await _mediator.Send(new GetProductsQuery { Page = page, PageSize = pageSize });
         return Ok(products);
+    }
+
+    [HttpGet("{id}")]
+    public async Task<IActionResult> GetProductById(int id)
+    {
+        var result = await _mediator.Send(new GetProductByIdQuery { ProductId = id });
+        return result is null ? NotFound() : Ok(result);
     }
 }

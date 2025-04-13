@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using AbySalto.Mid.Domain.Entities;
-using AbySalto.Mid.Domain.Interfaces;
+using AbySalto.Mid.Application.Interfaces;
 
 namespace AbySalto.Mid.Infrastructure.Repositories;
 

@@ -27,6 +27,16 @@ public class ProductProxyService : IProductProxyService
         return wrapper.Products;
     }
 
+    public async Task<ProductDto?> GetProductByIdAsync(int id, CancellationToken cancellationToken)
+    {
+        var response = await _httpClient.GetAsync($"https://dummyjson.com/products/{id}", cancellationToken);
+        if (!response.IsSuccessStatusCode) return null;
+
+        var json = await response.Content.ReadAsStringAsync(cancellationToken);
+        return JsonConvert.DeserializeObject<ProductDto>(json);
+    }
+
+
     private class ProductApiResponse
     {
         public List<ProductDto> Products { get; set; } = new();

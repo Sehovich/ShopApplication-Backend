@@ -1,52 +1,51 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using AbySalto.Mid.Application.Basket.Commands;
+using AbySalto.Mid.Application.Basket.Queries;
+using AbySalto.Mid.Application.BasketItems.Commands;
+using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.IdentityModel.Tokens.Jwt;
-using AbySalto.Mid.Application.Interfaces;
-using AbySalto.Mid.Domain.Entities;
-using AbySalto.Mid.Application.Contracts.Basket;
+using System.Security.Claims;
 
-namespace AbySalto.Mid.Controllers;
+namespace AbySalto.Mid.WebApi.Controllers;
 
 [Authorize]
 [ApiController]
 [Route("api/[controller]")]
 public class BasketController : ControllerBase
 {
-    private readonly IBasketService _basketService;
+    private readonly IMediator _mediator;
 
-    public BasketController(IBasketService basketService)
+    public BasketController(IMediator mediator)
     {
-        _basketService = basketService;
-    }
-
-    [HttpGet]
-    public IActionResult GetBasketItems()
-    {
-        var userId = GetUserId();
-        var items = _basketService.GetUserBasket(userId);
-        return Ok(items);
+        _mediator = mediator;
     }
 
     [HttpPost]
-    public IActionResult AddToBasket([FromBody] AddToBasketRequest request)
+    public async Task<IActionResult> Add([FromBody] AddToBasketCommand command)
     {
-        var userId = GetUserId();
-        _basketService.AddToBasket(userId, request.ProductId);
-        return Ok("Item added to basket.");
+        command.UserId = GetUserId();
+        await _mediator.Send(command);
+        return Ok();
     }
 
-    [HttpDelete("{id}")]
-    public IActionResult RemoveFromBasket(int id)
+    [HttpDelete("{productId}")]
+    public async Task<IActionResult> Remove(int productId)
     {
         var userId = GetUserId();
-        var success = _basketService.RemoveFromBasket(userId, id);
+        await _mediator.Send(new RemoveFromBasketCommand { UserId = userId, ProductId = productId });
+        return Ok();
+    }
 
-        return success ? Ok("Item removed.") : NotFound();
+    [HttpGet]
+    public async Task<IActionResult> Get()
+    {
+        var userId = GetUserId();
+        var items = await _mediator.Send(new GetBasketItemsQuery { UserId = userId });
+        return Ok(items);
     }
 
     private Guid GetUserId()
     {
-        var subClaim = User.FindFirst(JwtRegisteredClaimNames.Sub)?.Value;
-        return Guid.Parse(subClaim!);
+        return Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
     }
 }

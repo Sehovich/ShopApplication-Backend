@@ -1,14 +1,11 @@
 ﻿namespace AbySalto.Mid.Domain.Entities;
 
-public class BasketItem
+public class ProductFavourite
 {
-    public int Id { get; set; }
+    public Guid Id { get; set; } = Guid.NewGuid();
+
     public Guid UserId { get; set; }
     public int ProductId { get; set; }
 
-    public int Quantity { get; set; } = 1;
-
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-
-    public Product Product { get; set; } = default!;
 }

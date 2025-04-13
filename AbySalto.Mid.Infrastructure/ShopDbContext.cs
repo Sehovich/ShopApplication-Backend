@@ -12,6 +12,8 @@ public class ShopDbContext : DbContext
 
     public DbSet<User> Users => Set<User>();
 
+    public DbSet<ProductFavourite> ProductFavourites { get; set; }
+
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

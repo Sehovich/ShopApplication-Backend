@@ -1,5 +1,4 @@
 ﻿using AbySalto.Mid.Application.Interfaces;
-using AbySalto.Mid.Domain.Interfaces;
 using AbySalto.Mid.Infrastructure.Repositories;
 using AbySalto.Mid.Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
@@ -22,6 +21,10 @@ namespace AbySalto.Mid.Infrastructure
             services.AddScoped<IBasketService, BasketService>();
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddHttpClient<IProductProxyService, ProductProxyService>();
+            services.AddScoped<IProductFavouriteRepository, ProductFavouriteRepository>();
+            services.AddScoped<IBasketItemRepository, BasketItemRepository>();
+            services.AddHostedService<ExpiredBasketItemsWorker>();
+
 
             return services;
         }
