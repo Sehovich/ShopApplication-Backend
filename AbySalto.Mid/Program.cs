@@ -1,6 +1,8 @@
-
 using AbySalto.Mid.Application;
 using AbySalto.Mid.Infrastructure;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 namespace AbySalto.Mid
 {
@@ -10,11 +12,32 @@ namespace AbySalto.Mid
         {
             var builder = WebApplication.CreateBuilder(args);
 
+            // Layered architecture DI
             builder.Services
                 .AddPresentation()
                 .AddApplication()
                 .AddInfrastructure(builder.Configuration);
 
+            // JWT authentication setup
+            var jwtSettings = builder.Configuration.GetSection("Jwt");
+            builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
+                {
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuer = true,
+                        ValidateAudience = true,
+                        ValidateLifetime = true,
+                        ValidateIssuerSigningKey = true,
+                        ValidIssuer = jwtSettings["Issuer"],
+                        ValidAudience = jwtSettings["Audience"],
+                        IssuerSigningKey = new SymmetricSecurityKey(
+                            Encoding.UTF8.GetBytes(jwtSettings["Key"]!)
+                        )
+                    };
+                });
+
+            builder.Services.AddAuthorization();
             builder.Services.AddControllers();
             builder.Services.AddOpenApi();
 
@@ -33,8 +56,9 @@ namespace AbySalto.Mid
 
             app.UseHttpsRedirection();
 
+            // JWT auth middlewares
+            app.UseAuthentication();
             app.UseAuthorization();
-
 
             app.MapControllers();
 
