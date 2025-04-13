@@ -1,19 +1,18 @@
 ﻿using AbySalto.Mid.Application.Contracts.Product;
+using AbySalto.Mid.Application.Products.Queries;
 using MediatR;
-
-namespace AbySalto.Mid.Application.Products.Queries;
 
 public class GetProductByIdQueryHandler : IRequestHandler<GetProductByIdQuery, ProductDto?>
 {
-    private readonly IProductProxyService _proxy;
+    private readonly IProductService _productService;
 
-    public GetProductByIdQueryHandler(IProductProxyService proxy)
+    public GetProductByIdQueryHandler(IProductService productService)
     {
-        _proxy = proxy;
+        _productService = productService;
     }
 
     public async Task<ProductDto?> Handle(GetProductByIdQuery request, CancellationToken cancellationToken)
     {
-        return await _proxy.GetProductByIdAsync(request.ProductId, cancellationToken);
+        return await _productService.GetByIdAsync(request.ProductId, cancellationToken);
     }
 }
