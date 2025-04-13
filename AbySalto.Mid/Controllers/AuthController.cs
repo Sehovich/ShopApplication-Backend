@@ -7,9 +7,12 @@ using System.Text;
 using AbySalto.Mid.Infrastructure;
 using AbySalto.Mid.Domain.Entities;
 using AbySalto.Mid.Contracts.Authentication;
+using Microsoft.AspNetCore.Authorization;
+
 
 namespace AbySalto.Mid.Controllers;
 
+[Authorize]
 [ApiController]
 [Route("api/[controller]")]
 public class AuthController : ControllerBase
