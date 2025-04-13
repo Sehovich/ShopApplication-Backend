@@ -13,17 +13,16 @@ namespace AbySalto.Mid.Infrastructure
         public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddDatabase(configuration);
-            services.AddServices(
-                services.AddScoped<IBasketService, BasketService>(),
-
-                services.AddScoped<IUserRepository, UserRepository>()
-                );
+            services.AddServices();
             return services;
         }
 
-        private static IServiceCollection AddServices(this IServiceCollection services, IServiceCollection serviceCollection, IServiceCollection serviceCollection1)
+        private static IServiceCollection AddServices(this IServiceCollection services)
         {
-           
+            services.AddScoped<IBasketService, BasketService>();
+            services.AddScoped<IUserRepository, UserRepository>();
+            services.AddHttpClient<IProductProxyService, ProductProxyService>();
+
             return services;
         }
 
@@ -35,9 +34,7 @@ namespace AbySalto.Mid.Infrastructure
                     sqlOptions.EnableRetryOnFailure();
                 }));
 
-
             return services;
         }
-
     }
 }
