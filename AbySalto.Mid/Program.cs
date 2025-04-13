@@ -3,6 +3,8 @@ using AbySalto.Mid.Infrastructure;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using System.IdentityModel.Tokens.Jwt;
+
 
 namespace AbySalto.Mid
 {
@@ -29,11 +31,14 @@ namespace AbySalto.Mid
                         ValidateAudience = true,
                         ValidateLifetime = true,
                         ValidateIssuerSigningKey = true,
+
                         ValidIssuer = jwtSettings["Issuer"],
                         ValidAudience = jwtSettings["Audience"],
                         IssuerSigningKey = new SymmetricSecurityKey(
                             Encoding.UTF8.GetBytes(jwtSettings["Key"]!)
-                        )
+
+                        ),
+                        NameClaimType = JwtRegisteredClaimNames.Sub
                     };
                 });
 
@@ -41,7 +46,21 @@ namespace AbySalto.Mid
             builder.Services.AddControllers();
             builder.Services.AddOpenApi();
 
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("AllowAngularDev", policy =>
+                {
+                    policy.WithOrigins("http://localhost:4200")
+                          .AllowAnyHeader()
+                          .AllowAnyMethod();
+                });
+            });
+
+
             var app = builder.Build();
+
+         
+
 
             if (app.Environment.IsDevelopment())
             {
@@ -54,7 +73,8 @@ namespace AbySalto.Mid
                 });
             }
 
-            app.UseHttpsRedirection();
+            ////app.UseHttpsRedirection();
+            app.UseCors("AllowAngularDev");
 
             // JWT auth middlewares
             app.UseAuthentication();

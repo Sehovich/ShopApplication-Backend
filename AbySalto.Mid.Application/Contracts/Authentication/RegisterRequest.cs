@@ -1,4 +1,4 @@
-﻿namespace AbySalto.Mid.Contracts.Authentication;
+﻿namespace AbySalto.Mid.Application.Contracts.Authentication;
 
 public class RegisterRequest
 {

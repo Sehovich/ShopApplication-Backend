@@ -1,18 +1,17 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using AbySalto.Mid.Infrastructure;
 using AbySalto.Mid.Domain.Entities;
-using AbySalto.Mid.Contracts.Authentication;
 using Microsoft.AspNetCore.Authorization;
+using AbySalto.Mid.Application.Contracts.Authentication;
 
 
 namespace AbySalto.Mid.Controllers;
 
-[Authorize]
+
 [ApiController]
 [Route("api/[controller]")]
 public class AuthController : ControllerBase
@@ -27,13 +26,13 @@ public class AuthController : ControllerBase
     }
 
     #region Register
-
     [HttpPost("register")]
+    [AllowAnonymous]
     public IActionResult Register([FromBody] RegisterRequest request)
     {
         if (_dbContext.Users.Any(u => u.Email == request.Email))
         {
-            return BadRequest("User with this email already exists.");
+            return Conflict(new { message = "User with this email already exists." });
         }
 
         var user = new User
@@ -46,14 +45,16 @@ public class AuthController : ControllerBase
         _dbContext.Users.Add(user);
         _dbContext.SaveChanges();
 
-        return Ok("Registration successful.");
+        return Ok(new { message = "Registration successful." });
     }
+
 
     #endregion
 
     #region Login
 
     [HttpPost("login")]
+    [AllowAnonymous]
     public IActionResult Login([FromBody] LoginRequest request)
     {
         var user = _dbContext.Users.FirstOrDefault(u => u.Email == request.Email);
@@ -79,11 +80,13 @@ public class AuthController : ControllerBase
         var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
         var claims = new[]
-        {
-            new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
-            new Claim(JwtRegisteredClaimNames.Email, user.Email),
-            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
-        };
+ {
+    new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
+    new Claim(JwtRegisteredClaimNames.Email, user.Email),
+    new Claim("username", user.Username),
+    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+};
+
 
         var token = new JwtSecurityToken(
             issuer: jwtSettings["Issuer"],

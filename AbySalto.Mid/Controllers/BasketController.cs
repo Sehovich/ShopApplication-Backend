@@ -2,8 +2,8 @@
 using Microsoft.AspNetCore.Mvc;
 using System.IdentityModel.Tokens.Jwt;
 using AbySalto.Mid.Application.Interfaces;
-using AbySalto.Mid.Contracts.Basket;
 using AbySalto.Mid.Domain.Entities;
+using AbySalto.Mid.Application.Contracts.Basket;
 
 namespace AbySalto.Mid.Controllers;
 

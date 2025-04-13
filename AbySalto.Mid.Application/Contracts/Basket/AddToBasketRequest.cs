@@ -1,4 +1,4 @@
-﻿namespace AbySalto.Mid.Contracts.Basket;
+﻿namespace AbySalto.Mid.Application.Contracts.Basket;
 
 public class AddToBasketRequest
 {

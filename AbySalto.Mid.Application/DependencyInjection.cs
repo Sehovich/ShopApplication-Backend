@@ -1,11 +1,16 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-namespace AbySalto.Mid.Application
+using System.Reflection;
+using MediatR;
+
+namespace AbySalto.Mid.Application;
+
+public static class DependencyInjection
 {
-    public static class DependencyInjection
+    public static IServiceCollection AddApplication(this IServiceCollection services)
     {
-        public static IServiceCollection AddApplication(this IServiceCollection services)
-        {
-            return services;
-        }
+        services.AddMediatR(cfg =>
+            cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
+
+        return services;
     }
 }
