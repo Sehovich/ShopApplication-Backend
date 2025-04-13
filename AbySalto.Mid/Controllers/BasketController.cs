@@ -44,6 +44,15 @@ public class BasketController : ControllerBase
         return Ok(items);
     }
 
+    [HttpPut("quantity")]
+    public async Task<IActionResult> UpdateQuantity([FromBody] UpdateBasketQuantityCommand command)
+    {
+        command.UserId = GetUserId(); 
+        await _mediator.Send(command);
+        return Ok();
+    }
+
+
     private Guid GetUserId()
     {
         return Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
