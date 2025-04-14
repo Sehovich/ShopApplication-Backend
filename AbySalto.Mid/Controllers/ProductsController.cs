@@ -17,9 +17,10 @@ public class ProductsController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> Get([FromQuery] int page = 1, [FromQuery] int pageSize = 10)
     {
-        var products = await _mediator.Send(new GetProductsQuery { Page = page, PageSize = pageSize });
-        return Ok(products);
+        var result = await _mediator.Send(new GetProductsQuery { Page = page, PageSize = pageSize });
+        return Ok(result); 
     }
+
 
     [HttpGet("{id}")]
     public async Task<IActionResult> GetProductById(int id)

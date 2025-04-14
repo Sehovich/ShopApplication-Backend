@@ -1,7 +1,9 @@
 ﻿using AbySalto.Mid.Application.Contracts.Product;
+using AbySalto.Mid.Application.Contracts.Common;
+using AbySalto.Mid.Application.Interfaces;
 using MediatR;
 
-public class GetProductsQueryHandler : IRequestHandler<GetProductsQuery, List<ProductDto>>
+public class GetProductsQueryHandler : IRequestHandler<GetProductsQuery, PagedResult<ProductDto>>
 {
     private readonly IProductService _productService;
 
@@ -10,8 +12,15 @@ public class GetProductsQueryHandler : IRequestHandler<GetProductsQuery, List<Pr
         _productService = productService;
     }
 
-    public async Task<List<ProductDto>> Handle(GetProductsQuery request, CancellationToken cancellationToken)
+    public async Task<PagedResult<ProductDto>> Handle(GetProductsQuery request, CancellationToken cancellationToken)
     {
-        return await _productService.GetPagedAsync(request.Page, request.PageSize, cancellationToken);
+        var items = await _productService.GetPagedAsync(request.Page, request.PageSize, cancellationToken);
+        var total = await _productService.GetTotalCountAsync(cancellationToken);
+
+        return new PagedResult<ProductDto>
+        {
+            Items = items,
+            TotalCount = total
+        };
     }
 }

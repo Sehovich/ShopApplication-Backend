@@ -41,4 +41,10 @@ public class ProductService : IProductService
             Thumbnail = p.Thumbnail
         };
     }
+
+
+    public async Task<int> GetTotalCountAsync(CancellationToken cancellationToken)
+    {
+        return await _dbContext.Products.CountAsync(cancellationToken);
+    }
 }

@@ -3,5 +3,8 @@
 public interface IProductService
 {
     Task<List<ProductDto>> GetPagedAsync(int page, int pageSize, CancellationToken cancellationToken);
+    Task<int> GetTotalCountAsync(CancellationToken cancellationToken);
+
     Task<ProductDto?> GetByIdAsync(int id, CancellationToken cancellationToken);
 }
+
